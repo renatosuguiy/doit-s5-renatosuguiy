@@ -1,14 +1,4 @@
-import {
-  Flex,
-  Grid,
-  Image,
-  Heading,
-  Text,
-  VStack,
-  Button,
-  Box,
-} from "@chakra-ui/react";
-import { Input } from "../../components/Form/input";
+import { Flex, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,6 +6,10 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { SignUpInfo } from "./SignUpInfo";
 import { SignUpForm } from "./SignUpForm";
+import { GoBackButton } from "./GoBackButton";
+import { api } from "../../services/api";
+import { ModalSuccess } from "../../components/Modal/ModalSuccess";
+import { ModalError } from "../../components/Modal/ModalError";
 
 const signUpSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
@@ -28,13 +22,14 @@ const signUpSchema = yup.object().shape({
 });
 
 interface SignUpData {
+  name: string;
   email: string;
   password: string;
 }
 
 export const SignUp = () => {
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -43,38 +38,87 @@ export const SignUp = () => {
     resolver: yupResolver(signUpSchema),
   });
 
-  const handleSignIn = (data: SignUpData) => {
-    console.log(data);
+  const {
+    isOpen: isModalSuccessOpen,
+    onOpen: onModalSuccessOpen,
+    onClose: onModalSuccessClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isModalErrorOpen,
+    onOpen: onModalErrorOpen,
+    onClose: onModalErrorClose,
+  } = useDisclosure();
+
+  const handleSignUp = ({ name, email, password }: SignUpData) => {
+    api
+      .post("/register", { name, email, password })
+      .then((response) => {
+        setLoading(false);
+        onModalSuccessOpen();
+      })
+      .catch((err) => {
+        setLoading(false);
+        onModalErrorOpen();
+      });
   };
 
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    md: true,
+  });
+
   return (
-    <Flex
-      padding={["10px 15px", "10px 15px", "0", "0"]}
-      alignItems='center'
-      justifyContent='center'
-      height={["auto", "auto", "100vh", "100vh"]}
-      bgGradient={[
-        "linear(to-b, purple.800 65%, white 35%)",
-        "linear(to-b, purple.800 65%, white 35%)",
-        "linear(to-l, purple.800 65%, white 35%)",
-        "linear(to-l, purple.800 65%, white 35%)",
-      ]}
-      color='white'
-    >
+    <>
+      <ModalSuccess isOpen={isModalSuccessOpen} onClose={onModalSuccessClose} />
+      <ModalError
+        error='Seu email já está em uso'
+        isOpen={isModalErrorOpen}
+        onClose={onModalErrorClose}
+      />
       <Flex
-        w={["100%", "100%", "90%", "65%"]}
-        justifyContent='center'
-        flexDirection={["column", "column", "row", "row"]}
+        padding={["10px 15px", "10px 15px", "0", "0"]}
         alignItems='center'
+        justifyContent='center'
+        height={["auto", "auto", "100vh", "100vh"]}
+        bgGradient={[
+          "linear(to-b, purple.800 65%, white 35%)",
+          "linear(to-b, purple.800 65%, white 35%)",
+          "linear(to-l, purple.800 65%, white 35%)",
+          "linear(to-l, purple.800 65%, white 35%)",
+        ]}
+        color='white'
       >
-        <SignUpForm
-          errors={errors}
-          handleSignUp={handleSubmit(handleSignIn)}
-          loading={loading}
-          register={register}
-        />
-        <SignUpInfo />
+        <Flex
+          w={["100%", "100%", "90%", "65%"]}
+          justifyContent='center'
+          flexDirection={["column", "column", "row", "row"]}
+        >
+          {isWideVersion ? (
+            <>
+              <GoBackButton top='75' left='24' />
+              <SignUpForm
+                errors={errors}
+                handleSignUp={handleSubmit(handleSignUp)}
+                loading={loading}
+                register={register}
+              />
+              <SignUpInfo />
+            </>
+          ) : (
+            <>
+              <GoBackButton top='10' left='75vw' />
+              <SignUpInfo />
+              <SignUpForm
+                errors={errors}
+                handleSignUp={handleSubmit(handleSignUp)}
+                loading={loading}
+                register={register}
+              />
+            </>
+          )}
+        </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
