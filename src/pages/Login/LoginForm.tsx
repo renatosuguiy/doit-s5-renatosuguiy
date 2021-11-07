@@ -42,7 +42,7 @@ export const LoginForm = ({
           <Input
             placeholder='Digite seu login'
             icon={FaEnvelope}
-            label='login'
+            label='Login'
             type='email'
             error={errors.email}
             {...register("email")}
@@ -56,6 +56,7 @@ export const LoginForm = ({
         <Input
           placeholder='Digite sua senha'
           icon={FaLock}
+          label='Senha'
           error={errors.password}
           type='password'
           {...register("password")}

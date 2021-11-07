@@ -34,7 +34,7 @@ export const SignUpForm = ({
       color='gray.900'
     >
       <Heading size='lg'>Crie sua conta</Heading>
-      <VStack mt='6' spacing='5'>
+      <VStack mt='6' spacing='10'>
         <Box w='100%'>
           <Input
             placeholder='Digite seu nome'
@@ -56,23 +56,23 @@ export const SignUpForm = ({
               Exemplo: nome@email.com
             </Text>
           )}
+          <Input
+            placeholder='Digite sua senha'
+            icon={FaLock}
+            label='Senha'
+            error={errors.password}
+            type='password'
+            {...register("password")}
+          />
+          <Input
+            placeholder='Confirme sua senha'
+            icon={FaLock}
+            label='Confirmação de Senha'
+            error={errors.confirm_password}
+            type='password'
+            {...register("confirm_password")}
+          />
         </Box>
-        <Input
-          placeholder='Digite sua senha'
-          icon={FaLock}
-          label='Senha'
-          error={errors.password}
-          type='password'
-          {...register("password")}
-        />
-        <Input
-          placeholder='Confirme sua senha'
-          icon={FaLock}
-          label='Confirmação de Senha'
-          error={errors.confirm_password}
-          type='password'
-          {...register("confirm_password")}
-        />
       </VStack>
       <Button
         mt='8'

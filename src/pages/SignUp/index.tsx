@@ -10,6 +10,7 @@ import { GoBackButton } from "./GoBackButton";
 import { api } from "../../services/api";
 import { ModalSuccess } from "../../components/Modal/ModalSuccess";
 import { ModalError } from "../../components/Modal/ModalError";
+import { useHistory } from "react-router";
 
 const signUpSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
@@ -67,14 +68,23 @@ export const SignUp = () => {
     base: false,
     md: true,
   });
+  const history = useHistory();
 
   return (
     <>
-      <ModalSuccess isOpen={isModalSuccessOpen} onClose={onModalSuccessClose} />
+      <ModalSuccess
+        buttonMessage='Ir para o login agora'
+        message='Seu cadastro deu super certo, <b>vamos lá</b>'
+        secondaryText='Você já pode começar criando <b>suas listas</b> de tarefas agora mesmo...'
+        isOpen={isModalSuccessOpen}
+        onClose={onModalSuccessClose}
+        onClick={() => history.push("/")}
+      />
       <ModalError
         error='Seu email já está em uso'
         isOpen={isModalErrorOpen}
         onClose={onModalErrorClose}
+        secondaryText='Você já pode tentar novamente, <b> clicando</b> no botão acima ou aguarde alguns minutos...'
       />
       <Flex
         padding={["10px 15px", "10px 15px", "0", "0"]}

@@ -82,6 +82,9 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
           onChangeCapture={(e) => setValue(e.currentTarget.value)}
           _hover={{ bgColor: "gray.100" }}
           _placeholder={{ color: "gray.300" }}
+          _focus={{
+            bg: "gray.100",
+          }}
           size='lg'
           h='60px'
           ref={ref}
