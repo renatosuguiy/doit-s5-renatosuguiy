@@ -26,7 +26,7 @@ interface TaskContextData {
   loadTasks: (userId: string, accessToken: string) => Promise<void>;
   deleteTask: (taskId: string, accesToken: string) => Promise<void>;
   updateTask: (
-    askId: string,
+    taskId: string,
     userId: string,
     accessToken: string
   ) => Promise<void>;
