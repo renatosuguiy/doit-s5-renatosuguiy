@@ -48,7 +48,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const [data, setData] = useState<AuthState>(() => {
-    const accessToken = localStorage.getItem("@Doit: accessToken");
+    const accessToken = localStorage.getItem("@Doit:accessToken");
     const user = localStorage.getItem("@Doit:user");
     if (accessToken && user) {
       return { accessToken, user: JSON.parse(user) };
