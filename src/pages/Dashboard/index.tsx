@@ -1,4 +1,13 @@
-import { Box, Grid, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Grid,
+  useDisclosure,
+  Center,
+  Text,
+  Heading,
+  Stack,
+  Skeleton,
+} from "@chakra-ui/react";
 import { Card } from "../../components/Card";
 import { SearchBox } from "../../components/Form/SearchBox";
 import { Header } from "../../components/Header";
@@ -6,6 +15,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTasks } from "../../contexts/TasksContext";
 import { useState, useEffect } from "react";
 import { ModalTaskDetail } from "../../components/Modal/ModalTaskDetail";
+import { CardSkeleton } from "../../components/Skeleton/CardSkeleton";
 
 interface Task {
   id: string;
@@ -15,7 +25,7 @@ interface Task {
 }
 
 export const Dashboard = () => {
-  const { tasks, loadTasks } = useTasks();
+  const { tasks, loadTasks, notFound, taskNotFound } = useTasks();
   const { user, accessToken } = useAuth();
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +45,66 @@ export const Dashboard = () => {
     onTaskDetailOpen();
   };
 
+  if (notFound) {
+    return (
+      <>
+        <ModalTaskDetail
+          isOpen={isTaskDetailOpen}
+          onClose={onTaskDetailClose}
+          task={selectedTask}
+        />
+        <Box>
+          <Header />
+          <SearchBox />
+          <Center mt='4' textAlign='center' display='flex' flexDir='column'>
+            <Heading size='lg'>Não encontramos resultados para:</Heading>
+            <Text fontSize='xl' color='gray.300' fontWeight='bold'>
+              {taskNotFound}
+            </Text>
+            <Box
+              mt='6'
+              w={["80%", "40%"]}
+              padding='6'
+              boxShadow='base'
+              bg='white'
+            >
+              <Stack>
+                <Skeleton
+                  startColor='gray.100'
+                  endColor='gray.200'
+                  height='20px'
+                  width='80%'
+                  borderRadius='20px'
+                />
+                <Skeleton
+                  startColor='gray.100'
+                  endColor='gray.200'
+                  height='20px'
+                  borderRadius='20px'
+                  width='60%'
+                />
+              </Stack>
+              <Stack mt='8'>
+                <Skeleton
+                  startColor='gray.100'
+                  endColor='gray.200'
+                  height='15px'
+                  borderRadius='15px'
+                />
+                <Skeleton
+                  startColor='gray.100'
+                  endColor='gray.200'
+                  height='15px'
+                  borderRadius='15px'
+                />
+              </Stack>
+            </Box>
+          </Center>
+        </Box>
+      </>
+    );
+  }
+
   return (
     <>
       <ModalTaskDetail
@@ -52,9 +122,13 @@ export const Dashboard = () => {
           paddingX='8'
           mt='8'
         >
-          {tasks.map((task) => (
-            <Card key={task.id} task={task} onClick={handleClick} />
-          ))}
+          {loading ? (
+            <CardSkeleton repeatCount={6} />
+          ) : (
+            tasks.map((task) => (
+              <Card key={task.id} task={task} onClick={handleClick} />
+            ))
+          )}
         </Grid>
       </Box>
     </>
